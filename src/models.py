@@ -11,6 +11,7 @@ class Employee(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('department.department_id'), nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
+    is_head_of = db.Column(db.String, db.ForeignKey('department.department_id'), nullable=True)
 
 
 class Department(db.Model):
@@ -18,6 +19,7 @@ class Department(db.Model):
     name = db.Column(db.String(50), nullable=False)
     location = db.Column(db.String(120), nullable=False)
     employees = db.relationship("Employee", backref='department')
+    head = db.relationship('Employee', backref='head_of_department', uselist=False)
 
 
 class Project(db.Model):
