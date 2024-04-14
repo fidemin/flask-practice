@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
@@ -15,17 +15,23 @@ naming_convention = {
 db = SQLAlchemy(app, metadata=MetaData(naming_convention=naming_convention))
 migrate = Migrate(app, db)
 
-from . import models  # noqa
+from .models import *  # noqa
 
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return "Hello World!11"
 
 
 @app.route("/square/<int:number>")
 def square(number):
     return str(number ** 2)
+
+
+@app.route("/employees", methods=['POST'])
+def add_employee():
+    data = request.json
+    return jsonify(data)
 
 
 if __name__ == "__main__":
