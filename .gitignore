@@ -168,3 +168,9 @@ downloads/**
 
 # python pickle
 *.pkl
+
+# sqlite
+*.db
+
+# mac
+**/.DS_Store
