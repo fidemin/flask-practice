@@ -14,6 +14,17 @@ def add_employee():
     return jsonify(data)
 
 
+@api_bp.route("/employees/<int:employee_id>", methods=['GET'])
+def get_employee(employee_id):
+    employee = Employee.query.get(employee_id)
+    department = employee.department
+    result = {
+        "name": employee.name,
+        "department": department.name
+    }
+    return jsonify(result)
+
+
 @api_bp.route("/departments", methods=['POST'])
 def add_department():
     data = request.json
