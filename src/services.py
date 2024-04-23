@@ -12,7 +12,8 @@ class EmployeeService:
     def add(self, name: str, department_id: int) -> Employee:
         with transaction():
             employee = Employee(name=name, department_id=department_id)
-            return self.employee_repository.add(employee)
+            employee = self.employee_repository.add(employee)
+            return employee
 
 
 class DepartmentService:

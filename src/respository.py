@@ -34,6 +34,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     def add(self, entity):
         db.session.add(entity)
+        db.session.flush()
         return entity
 
     def get_by_id(self, id):
