@@ -3,7 +3,7 @@ from unittest import TestCase
 import pytest
 
 from src.app import db
-from src.models import Employee
+from src.model import Employee
 from src.respository import SQLAlchemyRepository
 
 

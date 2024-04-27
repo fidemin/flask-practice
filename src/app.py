@@ -14,7 +14,7 @@ naming_convention = {
 }
 db = SQLAlchemy(metadata=MetaData(naming_convention=naming_convention))
 
-from .models import *  # noqa
+from .model import *  # noqa
 
 
 def setup_config_for_db(app):
@@ -34,7 +34,7 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    from src.views import api_bp
+    from src.controller import api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
     return app

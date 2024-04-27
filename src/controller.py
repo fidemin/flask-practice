@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 
-from .models import Employee  # Adjust imports as necessary
-from .services import EmployeeService, DepartmentService
+from .model import Employee  # Adjust imports as necessary
+from .service import EmployeeService, DepartmentService
 
 api_bp = Blueprint('api', __name__)
 

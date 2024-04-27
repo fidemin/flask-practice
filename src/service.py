@@ -1,4 +1,4 @@
-from .models import Employee, Department
+from .model import Employee, Department
 from .respository import SQLAlchemyRepository, transaction
 
 
