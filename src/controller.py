@@ -1,7 +1,11 @@
+import logging
+
 from flask import Blueprint, request, jsonify
 
 from .model import Employee  # Adjust imports as necessary
 from .service import EmployeeService, DepartmentService
+
+logger = logging.getLogger(__name__)
 
 api_bp = Blueprint('api', __name__)
 
@@ -18,6 +22,8 @@ def add_employee():
 
 @api_bp.route("/employees/<int:employee_id>", methods=['GET'])
 def get_employee(employee_id):
+    logger.info(f"This is info log. get_employee: {employee_id}")
+    logger.debug(f"This is debug log. get_employee: {employee_id}")
     employee_service.get_by_id(employee_id)
     employee = Employee.query.get(employee_id)
     department = employee.department
