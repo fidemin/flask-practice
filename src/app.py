@@ -1,17 +1,24 @@
 import os
 from logging.config import dictConfig
 
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
+from src.common import generate_request_id
+
 logging_config = {
     "version": 1,
     "disable_existing_loggers": False,
+    'filters': {
+        'request_id_filter': {
+            '()': "src.logger_setup.RequestIDFilter",
+        },
+    },
     "formatters": {
         "default": {
-            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "format": "[%(asctime)s] %(levelname)s %(name)s %(request_id)s \"%(url)s\" - %(message)s"
         }
     },
     "handlers": {
@@ -19,16 +26,28 @@ logging_config = {
             "class": "logging.StreamHandler",
             "level": "DEBUG",
             "formatter": "default",
-            "stream": "ext://sys.stdout"
+            "stream": "ext://sys.stdout",
+            "filters": ["request_id_filter"]
         }
+    },
+    "root": {
+        "level": "DEBUG",
+        "handlers": ["console"]
     },
     "loggers": {
         "src": {
             "level": "DEBUG",
             "handlers": ["console"],
+            "propagate": False
+        },
+        "werkzeug": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False
         }
     }
 }
+dictConfig(logging_config)
 
 naming_convention = {
     "ix": 'ix_%(column_0_label)s',
@@ -56,7 +75,11 @@ def setup_config_for_db(app):
 def create_app():
     app = Flask(__name__)
 
-    dictConfig(logging_config)
+    @app.before_request
+    def before_request():
+        request.request_id = generate_request_id()
+
+    # dictConfig(logging_config)
 
     setup_config_for_db(app)
     db.init_app(app)
