@@ -15,6 +15,7 @@ class TestSQLAlchemyRepository(TestCase):
 
         try:
             employee = repository.add(employee)
+            db.session.flush()
             actual = db.session.query(Employee).filter_by(employee_id=employee.employee_id).one()
             assert actual.name == "Alice"
             assert actual.department_id == 1
