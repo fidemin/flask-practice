@@ -1,20 +1,9 @@
 import abc
 import logging
-from contextlib import contextmanager
 
 from .app import db
 
 logger = logging.getLogger(__name__)
-
-
-@contextmanager
-def transaction():
-    try:
-        yield
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        raise
 
 
 class AbstractRepository(abc.ABC):
@@ -37,7 +26,6 @@ class SQLAlchemyRepository(AbstractRepository):
 
     def add(self, entity):
         db.session.add(entity)
-        db.session.flush()
         return entity
 
     def get_by_id(self, id):

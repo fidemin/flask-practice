@@ -1,4 +1,5 @@
 import os
+import uuid
 from logging.config import dictConfig
 
 from flask import Flask, request
@@ -6,14 +7,12 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
-from src.common import generate_request_id
-
 logging_config = {
     "version": 1,
     "disable_existing_loggers": False,
     'filters': {
         'request_id_filter': {
-            '()': "src.logger_setup.RequestIDFilter",
+            '()': "src.common.logger_setup.RequestIDFilter",
         },
     },
     "formatters": {
@@ -59,6 +58,11 @@ naming_convention = {
 
 db = SQLAlchemy(metadata=MetaData(naming_convention=naming_convention))
 
+
+def _generate_request_id():
+    return str(uuid.uuid4())
+
+
 from .model import *  # noqa
 
 
@@ -79,7 +83,7 @@ def create_app():
 
     @app.before_request
     def before_request():
-        request.request_id = generate_request_id()
+        request.request_id = _generate_request_id()
 
     # dictConfig(logging_config)
 

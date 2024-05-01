@@ -1,5 +1,6 @@
+from .common.db_util import transaction
 from .model import Employee, Department
-from .respository import SQLAlchemyRepository, transaction
+from .respository import SQLAlchemyRepository
 
 
 class EmployeeService:
