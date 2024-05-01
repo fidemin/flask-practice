@@ -1,8 +1,10 @@
+from unittest.mock import patch
+
 import pytest
 from sqlalchemy import MetaData, Table, Column, Integer, String, create_engine
 
 from src.app import db
-from src.common.db_util import transaction
+from src.common.db_util import transaction, DB_SESSION_TRANSACTION_ID
 
 
 @pytest.fixture
@@ -59,18 +61,42 @@ def test_transaction__rollback(temporary_table):
 
 
 @pytest.mark.usefixtures("setup_flask_app")
-def test_transaction__commit_nested(temporary_table):
+def test_transaction__commit_nested_call_count_check(temporary_table):
+    with patch.object(db.session, "commit") as mock_commit:
+        with transaction():
+            db.session.execute(temporary_table.insert().values(name="test1"))
+            with transaction():
+                db.session.execute(temporary_table.insert().values(name="test2"))
+                with transaction():
+                    db.session.execute(temporary_table.insert().values(name="test3"))
+
+        with transaction():
+            db.session.execute(temporary_table.insert().values(name="test4"))
+
+    db.session.close()
+    assert mock_commit.call_count == 2
+
+
+@pytest.mark.usefixtures("setup_flask_app")
+def test_transaction__commit_nested_check_finally_commited(temporary_table):
     with transaction():
         db.session.execute(temporary_table.insert().values(name="test1"))
         with transaction():
             db.session.execute(temporary_table.insert().values(name="test2"))
+            with transaction():
+                db.session.execute(temporary_table.insert().values(name="test3"))
+
+    actual_list = db.session.execute(temporary_table.select().order_by('id')).fetchall()
+    assert len(actual_list) == 3
+    assert getattr(db.session, DB_SESSION_TRANSACTION_ID, None) is None
 
     with transaction():
-        db.session.execute(temporary_table.insert().values(name="test3"))
+        db.session.execute(temporary_table.insert().values(name="test4"))
 
     db.session.rollback()  # to check all transaction is commited
     try:
         actual_list = db.session.execute(temporary_table.select().order_by('id')).fetchall()
     finally:
         db.session.close()
-    assert len(actual_list) == 3
+    assert len(actual_list) == 4
+    assert getattr(db.session, DB_SESSION_TRANSACTION_ID, None) is None
