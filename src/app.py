@@ -79,7 +79,7 @@ def setup_config_for_db(app):
 def create_app():
     app = Flask(__name__)
 
-    app.config['SQLALCHEMY_ECHO'] = True
+    # app.config['SQLALCHEMY_ECHO'] = True
 
     @app.before_request
     def before_request():
