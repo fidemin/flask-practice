@@ -1,7 +1,10 @@
 import abc
+import logging
 from contextlib import contextmanager
 
 from .app import db
+
+logger = logging.getLogger(__name__)
 
 
 @contextmanager
@@ -38,7 +41,10 @@ class SQLAlchemyRepository(AbstractRepository):
         return entity
 
     def get_by_id(self, id):
-        return self._model_cls.query.get(id)
+        logger.debug("is in transaction:" + str(db.session._proxied.in_transaction()))  # expected False
+        model_obj = self._model_cls.query.get(id)
+        logger.debug("is in transaction:" + str(db.session._proxied.in_transaction()))  # expected True
+        return model_obj
 
     def delete(self, entity):
         db.session.delete(entity)
