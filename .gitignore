@@ -174,3 +174,10 @@ downloads/**
 
 # mac
 **/.DS_Store
+
+# skaffold
+skaffold.yaml
+skaffold.env
+
+# secret
+secret*.yaml
