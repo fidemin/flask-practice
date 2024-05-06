@@ -35,12 +35,12 @@ logging_config = {
     },
     "loggers": {
         "src": {
-            "level": "DEBUG",
+            "level": "INFO",
             "handlers": ["console"],
             "propagate": False
         },
         "werkzeug": {
-            "level": "ERROR",
+            "level": "INFO",
             "handlers": ["console"],
             "propagate": False
         }
@@ -63,7 +63,7 @@ def _generate_request_id():
     return str(uuid.uuid4())
 
 
-from .model import *  # noqa
+from src.model import *  # noqa
 
 
 def setup_config_for_db(app):
