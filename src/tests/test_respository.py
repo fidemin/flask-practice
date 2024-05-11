@@ -2,9 +2,9 @@ from unittest import TestCase
 
 import pytest
 
-from src.app import db
-from src.model import Employee
-from src.respository import SQLAlchemyRepository
+from src.main.app import db
+from src.main.model import Employee
+from src.main.respository import SQLAlchemyRepository
 
 
 @pytest.mark.usefixtures('setup_flask_app')

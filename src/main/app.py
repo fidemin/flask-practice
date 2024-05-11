@@ -12,7 +12,7 @@ logging_config = {
     "disable_existing_loggers": False,
     'filters': {
         'request_id_filter': {
-            '()': "src.common.logger_setup.RequestIDFilter",
+            '()': "src.main.common.logger_setup.RequestIDFilter",
         },
     },
     "formatters": {
@@ -63,7 +63,7 @@ def _generate_request_id():
     return str(uuid.uuid4())
 
 
-from src.model import *  # noqa
+from src.main.model import *  # noqa
 
 
 def setup_config_for_db(app):
@@ -91,7 +91,7 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    from src.controller import api_bp
+    from src.main.controller import api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
     return app

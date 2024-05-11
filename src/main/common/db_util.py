@@ -1,6 +1,6 @@
 import uuid
 
-from src.app import db
+from src.main.app import db
 
 DB_SESSION_TRANSACTION_ID = "_transaction_id"
 

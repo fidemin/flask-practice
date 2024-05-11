@@ -1,6 +1,6 @@
-from .common.db_util import transaction
-from .model import Employee, Department
-from .respository import SQLAlchemyRepository
+from src.main.common.db_util import transaction
+from src.main.model import Employee, Department
+from src.main.respository import SQLAlchemyRepository
 
 
 class EmployeeService:

@@ -2,8 +2,8 @@ import logging
 
 from flask import Blueprint, request, jsonify
 
-from .model import Employee  # Adjust imports as necessary
-from .service import EmployeeService, DepartmentService
+from src.main.model import Employee  # Adjust imports as necessary
+from src.main.service import EmployeeService, DepartmentService
 
 logger = logging.getLogger(__name__)
 

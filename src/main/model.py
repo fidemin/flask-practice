@@ -1,4 +1,4 @@
-from .app import db
+from src.main.app import db
 
 
 class Employee(db.Model):

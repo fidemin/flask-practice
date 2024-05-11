@@ -3,8 +3,8 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy import MetaData, Table, Column, Integer, String, create_engine
 
-from src.app import db
-from src.common.db_util import transaction, DB_SESSION_TRANSACTION_ID
+from src.main.app import db
+from src.main.common.db_util import transaction, DB_SESSION_TRANSACTION_ID
 
 
 @pytest.fixture

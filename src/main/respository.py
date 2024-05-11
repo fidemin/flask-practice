@@ -1,7 +1,7 @@
 import abc
 import logging
 
-from .app import db
+from src.main.app import db
 
 logger = logging.getLogger(__name__)
 
