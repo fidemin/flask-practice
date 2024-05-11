@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: flaskapp
-          image: fidemin/flaskapp:latest
+          image: fidemin/flaskapp:0.2
           ports:
             - containerPort: 3000
           env:
