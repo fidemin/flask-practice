@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-app
+  name: flaskapp
   labels:
     app: flaskapp
 spec:
@@ -19,6 +19,13 @@ spec:
           image: fidemin/flaskapp:0.2
           ports:
             - containerPort: 8000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "50Mi"
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
           env:
             - name: DB_HOST
               valueFrom:
