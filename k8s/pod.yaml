@@ -7,7 +7,7 @@ spec:
     - name: flaskapp
       image: fidemin/flaskapp:latest
       ports:
-        - containerPort: 3000
+        - containerPort: 8000
       env:
         - name: DB_HOST
           valueFrom:
