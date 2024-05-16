@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "filters": {
+    "request_id_filter": {
+      "()": "src.main.common.logger_setup.RequestIDFilter"
+    }
+  },
+  "formatters": {
+    "default": {
+      "format": "[%(asctime)s] %(levelname)s %(name)s %(request_id)s \"%(url)s\" - %(message)s"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "level": "DEBUG",
+      "formatter": "default",
+      "stream": "ext://sys.stdout",
+      "filters": [
+        "request_id_filter"
+      ]
+    }
+  },
+  "root": {
+    "level": "DEBUG",
+    "handlers": [
+      "console"
+    ]
+  },
+  "loggers": {
+    "src": {
+      "level": "INFO",
+      "handlers": [
+        "console"
+      ],
+      "propagate": false
+    },
+    "werkzeug": {
+      "level": "INFO",
+      "handlers": [
+        "console"
+      ],
+      "propagate": false
+    }
+  }
+}

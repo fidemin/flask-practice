@@ -1,3 +1,4 @@
+import json
 import os
 import uuid
 from logging.config import dictConfig
@@ -7,46 +8,20 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
-logging_config = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    'filters': {
-        'request_id_filter': {
-            '()': "src.main.common.logger_setup.RequestIDFilter",
-        },
-    },
-    "formatters": {
-        "default": {
-            "format": "[%(asctime)s] %(levelname)s %(name)s %(request_id)s \"%(url)s\" - %(message)s"
-        }
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "level": "DEBUG",
-            "formatter": "default",
-            "stream": "ext://sys.stdout",
-            "filters": ["request_id_filter"]
-        }
-    },
-    "root": {
-        "level": "DEBUG",
-        "handlers": ["console"]
-    },
-    "loggers": {
-        "src": {
-            "level": "INFO",
-            "handlers": ["console"],
-            "propagate": False
-        },
-        "werkzeug": {
-            "level": "INFO",
-            "handlers": ["console"],
-            "propagate": False
-        }
-    }
-}
-dictConfig(logging_config)
+from src.main.common.celery_util import celery_init_app
+from src.main.common.logging_util import default_logging_config
+
+
+def logging_from_json(filepath: str):
+    with open(filepath, 'r') as f:
+        logging_config = json.load(f)
+    return logging_config
+
+
+if logging_filepath := os.getenv('LOGGING_CONFIG_FILE'):
+    dictConfig(logging_from_json(logging_filepath))
+else:
+    dictConfig(default_logging_config)
 
 naming_convention = {
     "ix": 'ix_%(column_0_label)s',
@@ -81,18 +56,28 @@ def create_app():
 
     # app.config['SQLALCHEMY_ECHO'] = True
 
-    @app.before_request
-    def before_request():
-        request.request_id = _generate_request_id()
-
-    # dictConfig(logging_config)
-
     setup_config_for_db(app)
     db.init_app(app)
     migrate = Migrate(app, db)
 
+    # setting for celery
+    redis_host = os.getenv('REDIS_HOST', 'localhost')
+    redis_port = os.getenv('REDIS_PORT', '6379')
+    app.config.from_mapping(
+        CELERY=dict(
+            broker_url=f"redis://{redis_host}:{redis_port}",
+            result_backend=f"redis://{redis_host}:{redis_port}",
+            task_ignore_result=True,
+        ),
+    )
+    celery_init_app(app)
+
     from src.main.controller import api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
+
+    @app.before_request
+    def before_request():
+        request.request_id = _generate_request_id()
 
     return app
 
