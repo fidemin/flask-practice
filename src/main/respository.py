@@ -2,6 +2,8 @@ import abc
 import logging
 
 from src.main.app import db
+from src.main.common.query import JoinQueryChain, EmployeeByNameAndLocationChain, QueryChain
+from src.main.model import Employee, Department
 
 logger = logging.getLogger(__name__)
 
@@ -36,3 +38,17 @@ class SQLAlchemyRepository(AbstractRepository):
 
     def delete(self, entity):
         db.session.delete(entity)
+
+
+class EmployeeRepository(SQLAlchemyRepository):
+    def __init__(self):
+        super().__init__(Employee)
+
+    def find_by_name_and_location(self, name, location):
+        chain = QueryChain()
+        chain.add(JoinQueryChain(
+            Department, Department.department_id,
+            self._model_cls, self._model_cls.department_id)
+        ).add(EmployeeByNameAndLocationChain(name, location))
+        query = chain.apply(self._model_cls.query)
+        return query.all()

@@ -18,6 +18,14 @@ def add_employee():
     return jsonify({"id": employee.employee_id})
 
 
+@api_bp.route("/employees", methods=['GET'])
+def find_employees():
+    name = request.args.get('name')
+    location = request.args.get('location')
+    employees = EmployeeService.find_by_name_location(name, location)
+    return jsonify([{"name": employee.name, "location": employee.department.location} for employee in employees])
+
+
 @api_bp.route("/employees/<int:employee_id>", methods=['GET'])
 def get_employee(employee_id):
     logger.info(f"This is info log. get_employee: {employee_id}")
