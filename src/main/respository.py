@@ -3,7 +3,7 @@ import logging
 
 from src.main.app import db
 from src.main.common.query import JoinQueryChain, QueryChain, \
-    EmployeeNameCondition, LogicalOperatorCondition, DepartmentLocationCondition
+    EmployeeNameCondition, LogicalOperatorCondition, DepartmentLocationCondition, EmployeeGenderCondition
 from src.main.model import Employee, Department
 
 logger = logging.getLogger(__name__)
@@ -45,11 +45,18 @@ class EmployeeRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Employee)
 
-    def find_by_name_and_location(self, name, location, operator="and"):
-        condition = LogicalOperatorCondition(
-            operator,
-            EmployeeNameCondition(name),
-            DepartmentLocationCondition(location))
+    def find_by_name_and_location(self, name, location, operator="and", gender=None):
+        if gender is None:
+            condition = LogicalOperatorCondition(
+                operator,
+                EmployeeNameCondition(name),
+                DepartmentLocationCondition(location))
+        else:
+            sub_condition = LogicalOperatorCondition(
+                operator,
+                EmployeeNameCondition(name),
+                DepartmentLocationCondition(location))
+            condition = LogicalOperatorCondition("and", sub_condition, EmployeeGenderCondition(gender))
 
         chain = QueryChain()
         chain.add(JoinQueryChain(

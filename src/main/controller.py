@@ -23,7 +23,8 @@ def find_employees():
     name = request.args.get('name')
     location = request.args.get('location')
     operator = request.args.get('operator', 'and')
-    employees = EmployeeService.find_by_name_location(name, location, operator)
+    gender = request.args.get('gender')
+    employees = EmployeeService.find_by_name_location(name, location, operator, gender)
     return jsonify([{"name": employee.name, "location": employee.department.location} for employee in employees])
 
 

@@ -118,6 +118,17 @@ class EmployeeNameCondition(Condition):
         return true()
 
 
+class EmployeeGenderCondition(Condition):
+    def __init__(self, gender):
+        self._gender = gender
+
+    def apply(self):
+        if self._gender:
+            return Employee.gender == self._gender
+
+        return true()
+
+
 class DepartmentLocationCondition(Condition):
     def __init__(self, location):
         self._location = location
