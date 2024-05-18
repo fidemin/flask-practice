@@ -11,8 +11,8 @@ class EmployeeService:
         return cls._employee_repository.get_by_id(employee_id)
 
     @classmethod
-    def find_by_name_location(cls, name: str, location: str) -> Employee:
-        return cls._employee_repository.find_by_name_and_location(name, location)
+    def find_by_name_location(cls, name: str, location: str, operator: str) -> Employee:
+        return cls._employee_repository.find_by_name_and_location(name, location, operator)
 
     @classmethod
     def add(cls, name: str, department_id: int) -> Employee:

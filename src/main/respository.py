@@ -2,7 +2,8 @@ import abc
 import logging
 
 from src.main.app import db
-from src.main.common.query import JoinQueryChain, EmployeeByNameAndLocationChain, QueryChain
+from src.main.common.query import JoinQueryChain, QueryChain, \
+    EmployeeNameCondition, LogicalOperatorCondition, DepartmentLocationCondition
 from src.main.model import Employee, Department
 
 logger = logging.getLogger(__name__)
@@ -30,9 +31,9 @@ class SQLAlchemyRepository(AbstractRepository):
         db.session.add(entity)
         return entity
 
-    def get_by_id(self, id):
+    def get_by_id(self, id_):
         logger.debug("is in transaction:" + str(db.session._proxied.in_transaction()))  # expected False
-        model_obj = self._model_cls.query.get(id)
+        model_obj = self._model_cls.query.get(id_)
         logger.debug("is in transaction:" + str(db.session._proxied.in_transaction()))  # expected True
         return model_obj
 
@@ -44,11 +45,16 @@ class EmployeeRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Employee)
 
-    def find_by_name_and_location(self, name, location):
+    def find_by_name_and_location(self, name, location, operator="and"):
+        condition = LogicalOperatorCondition(
+            operator,
+            EmployeeNameCondition(name),
+            DepartmentLocationCondition(location))
+
         chain = QueryChain()
         chain.add(JoinQueryChain(
             Department, Department.department_id,
-            self._model_cls, self._model_cls.department_id)
-        ).add(EmployeeByNameAndLocationChain(name, location))
+            self._model_cls, self._model_cls.department_id)).add_condition(condition)
+
         query = chain.apply(self._model_cls.query)
         return query.all()
