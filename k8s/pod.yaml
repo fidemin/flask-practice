@@ -5,9 +5,16 @@ metadata:
 spec:
   containers:
     - name: flaskapp
-      image: fidemin/flaskapp:latest
+      image: fidemin/flaskapp:0.3
       ports:
         - containerPort: 8000
+      resources:
+        requests:
+          cpu: "200m"
+          memory: "500Mi"
+        limits:
+          cpu: "200m"
+          memory: "500Mi"
       env:
         - name: DB_HOST
           valueFrom:
@@ -29,3 +36,7 @@ spec:
             secretKeyRef:
               name: flaskapp-secret
               key: db_password
+    - name: flaskapp-nginx
+      image: fidemin/nginx:0.1
+      ports:
+        - containerPort: 80
