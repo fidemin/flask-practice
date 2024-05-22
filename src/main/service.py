@@ -21,6 +21,11 @@ class EmployeeService:
             employee = cls._employee_repository.add(employee)
         return employee
 
+    @classmethod
+    def copy(cls, employee_id: int) -> Employee:
+        with transaction():
+            return cls._employee_repository.copy(employee_id)
+
 
 class DepartmentService:
     _deployment_repository = SQLAlchemyRepository(Department)

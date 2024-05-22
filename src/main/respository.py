@@ -65,3 +65,10 @@ class EmployeeRepository(SQLAlchemyRepository):
 
         query = chain.apply(self._model_cls.query)
         return query.all()
+
+    def copy(self, employee_id):
+        employee = self.get_by_id(employee_id)
+        copied = Employee(employee_id=None, department_id=employee.department_id, name=employee.name)
+        db.session.add(copied)
+        db.session.flush()
+        return copied

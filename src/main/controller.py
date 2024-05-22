@@ -2,7 +2,7 @@ import logging
 
 from flask import request, jsonify, Blueprint
 
-from src.main.model import Employee  # Adjust imports as necessary
+from src.main.model import Employee
 from src.main.service import EmployeeService, DepartmentService
 from src.main.task import employee_logger
 
@@ -39,8 +39,14 @@ def get_employee(employee_id):
         "name": employee.name,
         "department": department.name
     }
-    employee_logger.delay(employee_id)
     return jsonify(result)
+
+
+@api_bp.route("/employees/<int:employee_id>/copy", methods=['POST'])
+def copy_employee(employee_id):
+    employee_logger.delay(employee_id)
+    # copy_employee_task.delay(employee_id)
+    return jsonify({})
 
 
 @api_bp.route("/departments", methods=['POST'])
