@@ -12,4 +12,7 @@ def celery_init_app(app: Flask) -> Celery:
     celery_app.config_from_object(app.config["CELERY"])
     celery_app.set_default()
     app.extensions["celery"] = celery_app
+    celery_app.conf.update(
+        worker_hijack_root_logger=False
+    )
     return celery_app
