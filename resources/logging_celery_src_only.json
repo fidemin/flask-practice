@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "default": {
+      "()": "src.main.common.logger_celery_setup.CeleryFormatter",
+      "format": "[%(asctime)s] %(levelname)s %(name)s [%(task_id)s] - %(message)s"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "level": "DEBUG",
+      "formatter": "default",
+      "stream": "ext://sys.stdout"
+    }
+  },
+  "loggers": {
+    "src": {
+      "level": "INFO",
+      "handlers": [
+        "console"
+      ],
+      "propagate": false
+    }
+  }
+}

@@ -1,6 +1,8 @@
 import json
+import logging
 import os
 import uuid
+from json import JSONDecodeError
 from logging.config import dictConfig
 
 from flask import Flask, request
@@ -10,6 +12,8 @@ from sqlalchemy import MetaData
 
 from src.main.common.celery_util import celery_init_app
 from src.main.common.logging_util import default_logging_config
+
+logger = logging.getLogger(__name__)
 
 
 def logging_from_json(filepath: str):
@@ -78,6 +82,16 @@ def create_app():
     @app.before_request
     def before_request():
         request.request_id = _generate_request_id()
+
+    @app.after_request
+    def after_request(response):
+        try:
+            response_data = json.dumps(json.loads(response.data), ensure_ascii=False)
+        except JSONDecodeError:
+            response_data = response.data.decode('utf-8')
+
+        logger.info(f"Response body: {response_data}")
+        return response
 
     return app
 

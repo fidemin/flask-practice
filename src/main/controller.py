@@ -44,8 +44,9 @@ def get_employee(employee_id):
 
 @api_bp.route("/employees/<int:employee_id>/copy", methods=['POST'])
 def copy_employee(employee_id):
+    logger.info("Copy employee")
     copy_employee_task.delay(employee_id)
-    return jsonify({})
+    return jsonify({"data": "성공하였어요 🔥"})
 
 
 @api_bp.route("/departments", methods=['POST'])
