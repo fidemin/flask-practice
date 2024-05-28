@@ -24,7 +24,9 @@ class EmployeeService:
     @classmethod
     def copy(cls, employee_id: int) -> Employee:
         with transaction():
-            return cls._employee_repository.copy(employee_id)
+            employee = cls._employee_repository.get_by_id(employee_id)
+            new_employee = cls.add(employee.name, employee.department_id)
+        return new_employee
 
 
 class DepartmentService:

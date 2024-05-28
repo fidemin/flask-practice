@@ -42,12 +42,6 @@ def test_transaction__commit(temporary_table):
 
 @pytest.mark.usefixtures("setup_flask_app")
 def test_transaction__rollback(temporary_table):
-    """
-    please create test for rollback transaction
-    :param temporary_table:
-    :return:
-
-    """
     with pytest.raises(Exception):
         with transaction():
             db.session.execute(temporary_table.insert().values(name="test"))
