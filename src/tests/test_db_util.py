@@ -72,6 +72,21 @@ def test_transaction__commit_nested_call_count_check(temporary_table, session_cl
 
 
 @pytest.mark.usefixtures("setup_flask_app")
+def test_transaction__rollback_nested_call_count_check(temporary_table, session_close):
+    with pytest.raises(ValueError):
+        with patch.object(db.session, "rollback") as mock_rollback:
+            with transaction():
+                db.session.execute(temporary_table.insert().values(name="test1"))
+                with transaction():
+                    db.session.execute(temporary_table.insert().values(name="test2"))
+                    with transaction():
+                        db.session.execute(temporary_table.insert().values(name="test3"))
+                        raise ValueError("rollback")
+
+    assert mock_rollback.call_count == 1
+
+
+@pytest.mark.usefixtures("setup_flask_app")
 def test_transaction__commit_nested_check_finally_commited(temporary_table, session_close):
     with transaction() as first_transaction:
         db.session.execute(temporary_table.insert().values(name="test1"))
@@ -120,7 +135,19 @@ def commit_func3(table: Table):
 @transaction()
 def rollback_func1(table: Table):
     db.session.execute(table.insert().values(name="test"))
-    raise Exception("rollback")
+    raise ValueError("rollback")
+
+
+@transaction()
+def rollback_func2(table: Table):
+    db.session.execute(table.insert().values(name="test"))
+    rollback_func1(table)
+
+
+@transaction()
+def nested_rollback_func(table: Table):
+    db.session.execute(table.insert().values(name="test1"))
+    rollback_func2(table)
 
 
 @pytest.mark.usefixtures("setup_flask_app")
@@ -135,7 +162,7 @@ def test_transaction_decorator__commit(temporary_table, session_close):
 
 @pytest.mark.usefixtures("setup_flask_app")
 def test_transaction_decorator__rollback(temporary_table, session_close):
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         rollback_func1(temporary_table)
 
     actual = db.session.execute(temporary_table.select().filter_by(name="test")).fetchone()
@@ -148,6 +175,14 @@ def test_transaction_decorator__commit_nested_call_count_check(temporary_table, 
         commit_func1(temporary_table)
         commit_func(temporary_table)
     assert mock_commit.call_count == 2
+
+
+@pytest.mark.usefixtures("setup_flask_app")
+def test_transaction_decorator__rollback_nested_call_count_check(temporary_table, session_close):
+    with pytest.raises(ValueError):
+        with patch.object(db.session, "rollback") as mock_rollback:
+            nested_rollback_func(temporary_table)
+    assert mock_rollback.call_count == 1
 
 
 @pytest.mark.usefixtures("setup_flask_app")
