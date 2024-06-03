@@ -1,4 +1,4 @@
-from src.main.common.db_util import transaction
+from src.main.common.db_util import Transaction
 from src.main.model import Employee, Department
 from src.main.respository import SQLAlchemyRepository, EmployeeRepository
 
@@ -16,14 +16,14 @@ class EmployeeService:
 
     @classmethod
     def add(cls, name: str, department_id: int) -> Employee:
-        with transaction():
+        with Transaction():
             employee = Employee(name=name, department_id=department_id)
             employee = cls._employee_repository.add(employee)
         return employee
 
     @classmethod
     def copy(cls, employee_id: int) -> Employee:
-        with transaction():
+        with Transaction():
             employee = cls._employee_repository.get_by_id(employee_id)
             new_employee = cls.add(employee.name, employee.department_id)
         return new_employee
@@ -34,6 +34,6 @@ class DepartmentService:
 
     @classmethod
     def add(cls, name: str, location: str):
-        with transaction():
+        with Transaction():
             department = Department(name=name, location=location)
             return cls._deployment_repository.add(department)

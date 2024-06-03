@@ -9,7 +9,7 @@ DB_SESSION_TRANSACTION_ID = "_local_transaction_id"
 logger = logging.getLogger(__name__)
 
 
-class transaction(ContextDecorator):
+class Transaction(ContextDecorator):
     def __enter__(self):
         self._transaction_id = str(uuid.uuid4())
         if not getattr(db.session._proxied, DB_SESSION_TRANSACTION_ID, None):
@@ -29,3 +29,11 @@ class transaction(ContextDecorator):
             raise e
         finally:
             delattr(db.session._proxied, DB_SESSION_TRANSACTION_ID)
+
+
+def transaction(wrapped_fn=None):
+    # decorator로 사용되었을 때, wrapped_fn에는 decorator로 감싼 함수가 들어온다.
+    if callable(wrapped_fn):
+        return Transaction()(wrapped_fn)
+    # with문으로 사용되었을 때, wrapped_fn에는 None이 들어온다.
+    return Transaction()
