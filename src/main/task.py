@@ -14,6 +14,6 @@ def employee_logger(employee_id):
 
 
 @shared_task(ignore_result=False)
-def copy_employee(employee_id):
+def copy_employee_task(employee_id):
     copied_employee = EmployeeService.copy(employee_id)
     logger.info(f"Copied employee: {employee_id} to {copied_employee.employee_id}")

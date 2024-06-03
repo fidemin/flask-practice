@@ -4,6 +4,7 @@ from flask import request, jsonify, Blueprint
 
 from src.main.model import Employee
 from src.main.service import EmployeeService, DepartmentService
+from src.main.task import copy_employee_task
 
 logger = logging.getLogger(__name__)
 
@@ -55,3 +56,14 @@ def add_department():
     data = request.json
     department = DepartmentService.add(data['name'], data['location'])
     return jsonify({"id": department.department_id})
+
+
+@api_bp.route("/tasks", methods=['POST'])
+def execute_task():
+    data = request.json
+    task_name = data['task_name']
+    if task_name == 'copy_employee':
+        task = copy_employee_task.apply_async(args=[data['data']['employee_id']])
+    else:
+        return jsonify({"error": "Task not found"}), 404
+    return jsonify({"task_id": task.id})

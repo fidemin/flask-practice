@@ -4,7 +4,7 @@
   "formatters": {
     "default": {
       "()": "src.main.common.logger_celery_setup.CeleryFormatter",
-      "format": "[%(asctime)s] %(levelname)s %(name)s [%(task_id)s] - %(message)s"
+      "format": "[%(asctime)s] %(levelname)s %(task_id)s %(task_name)s %(processName)s %(name)s:%(lineno)s - %(message)s"
     }
   },
   "handlers": {
