@@ -50,4 +50,4 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest ./src/tests
+          python -m pytest ./src/tests
