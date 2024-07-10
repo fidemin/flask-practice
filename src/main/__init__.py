@@ -5,7 +5,10 @@ import uuid
 from json import JSONDecodeError
 from logging.config import dictConfig
 
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask, request
+from flask_apispec import FlaskApiSpec
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
@@ -56,7 +59,7 @@ def create_app():
     else:
         dictConfig(default_logging_config)
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
 
     # app.config['SQLALCHEMY_ECHO'] = True
 
@@ -77,7 +80,22 @@ def create_app():
     celery_init_app(app)
 
     from src.main.controller import api_bp
+    from src.main.views import apispec_bp
     app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(apispec_bp, url_prefix='/apispec')
+
+    docs = FlaskApiSpec(app)
+    docs.register_existing_resources()
+
+    app.config.update({
+        'APISPEC_SPEC': APISpec(
+            title='flask practice',
+            version='v1',
+            openapi_version='3.0',
+            plugins=[MarshmallowPlugin()],
+        ),
+        'APISPEC_SWAGGER_URL': '/swagger/',
+    })
 
     @app.before_request
     def before_request():
@@ -85,6 +103,9 @@ def create_app():
 
     @app.after_request
     def after_request(response):
+        if not response.content_type == 'application/json':
+            return response
+
         try:
             response_data = json.dumps(json.loads(response.data), ensure_ascii=False)
         except JSONDecodeError:
