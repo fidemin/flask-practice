@@ -1,6 +1,6 @@
 from sqlalchemy import Enum
 
-from src.main.app import db
+from src.main import db
 
 
 class Employee(db.Model):

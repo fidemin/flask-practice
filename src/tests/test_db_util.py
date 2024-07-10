@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy import MetaData, Table, Column, Integer, String, create_engine
 
-from src.main.app import db
+from src.main import db
 from src.main.common.db_util import DB_SESSION_TRANSACTION_ID, transaction
 
 

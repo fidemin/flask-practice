@@ -2,7 +2,7 @@ import logging
 import uuid
 from contextlib import ContextDecorator
 
-from src.main.app import db
+from src.main import db
 
 DB_SESSION_TRANSACTION_ID = "_local_transaction_id"
 

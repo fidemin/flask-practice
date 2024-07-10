@@ -1,7 +1,7 @@
 import abc
 import logging
 
-from src.main.app import db
+from src.main import db
 from src.main.common.query import JoinQueryChain, QueryChain, \
     EmployeeNameCondition, LogicalOperatorCondition, DepartmentLocationCondition, EmployeeGenderCondition
 from src.main.model import Employee, Department

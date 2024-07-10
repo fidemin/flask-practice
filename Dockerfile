@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 
 # Run the command to start gunicorn
-CMD ["gunicorn", "-b", ":8000", "src.main.app:create_app()"]
+CMD ["gunicorn", "-b", ":8000", "src.main:create_app()"]
