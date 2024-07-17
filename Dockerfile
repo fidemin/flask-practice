@@ -10,7 +10,7 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y build-essential
-RUN apt-get install -y libpq-dev python3-dev
+RUN apt-get install -y libpq-dev python3-dev procps
 
 # Install python dependencies
 COPY requirements.txt /app/
@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 
 # Run the command to start gunicorn
-CMD ["gunicorn", "-b", ":8000", "src.main:create_app()"]
+CMD ["bash", "bin/run.sh"]
