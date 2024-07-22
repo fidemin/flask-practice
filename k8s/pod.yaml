@@ -39,7 +39,11 @@ spec:
               name: flaskapp-secret
               key: db_password
         - name: LOGGING_CONFIG_FILE
-          value: ./resources/logging_api.json
+          valueFrom:
+            configMapKeyRef:
+              name: flaskapp-config
+              key: LOGGING_CONFIG_FILE
+              optional: true
 
     - name: flaskapp-nginx
       image: fidemin/nginx:0.1

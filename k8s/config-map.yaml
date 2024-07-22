@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flaskapp-config
+data:
+  LOGGING_CONFIG_FILE: /app/resources/logging_api.json

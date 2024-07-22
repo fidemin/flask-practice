@@ -14,6 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
 from src.main.common.celery_util import celery_init_app
+from src.main.common.logger_setup import RequestIDFilter
 from src.main.common.logging_util import default_logging_config
 
 logger = logging.getLogger(__name__)
@@ -56,8 +57,10 @@ def setup_config_for_db(app):
 def create_app():
     if logging_filepath := os.getenv('LOGGING_CONFIG_FILE'):
         dictConfig(logging_from_json(logging_filepath))
+        logger.info(f"Load logging config from {logging_filepath}")
     else:
         dictConfig(default_logging_config)
+        logger.info("Load default logging config")
 
     app = Flask(__name__, static_folder='static')
 
