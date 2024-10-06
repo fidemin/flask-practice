@@ -45,10 +45,10 @@ def get_employee(employee_id):
 @api_bp.route("/employees/<int:employee_id>/copy", methods=['POST'])
 def copy_employee(employee_id):
     logger.info("Copy employee")
-    employee = EmployeeService.copy(employee_id)
-    # copy_employee_task.delay(employee_id)
-    # return jsonify({"data": "성공하였어요 🔥"})
-    return jsonify({"id": employee.employee_id})
+    # employee = EmployeeService.copy(employee_id)
+    copy_employee_task.delay(employee_id)
+    return jsonify({"data": "성공하였어요 🔥"})
+    # return jsonify({"id": employee.employee_id})
 
 
 @api_bp.route("/departments", methods=['POST'])

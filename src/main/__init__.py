@@ -76,10 +76,17 @@ def create_app():
     app.config.from_mapping(
         CELERY=dict(
             broker_url=f"redis://{redis_host}:{redis_port}",
-            result_backend=f"redis://{redis_host}:{redis_port}",
+            result_backend=f"db+{app.config['SQLALCHEMY_DATABASE_URI']}",
             task_ignore_result=True,
+            task_routes={
+                'general.*': {'queue': 'general_queue'},
+                'employee.*': {'queue': 'employee_queue'},
+            },
+            result_extended=True,
         ),
     )
+
+    # Set specific schema for SQLAlchemy
     celery_init_app(app)
 
     from src.main.controller import api_bp
