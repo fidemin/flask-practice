@@ -27,7 +27,7 @@ class CreateLargeTableOperator(Operator):
 
         table.create(db.engine)
 
-        for rows in self._chunks(self.row_count, 10000):
+        for rows in self._chunks(self.row_count, 50000):
             db.session.execute(table.insert(), rows)
             db.session.commit()
 
