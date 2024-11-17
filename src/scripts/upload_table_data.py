@@ -7,4 +7,4 @@ if __name__ == '__main__':
         from src.main.operators.fileserver import UploadCSVFromTableOperator
 
         upload_csv = UploadCSVFromTableOperator(table_name="very_large_table")
-        upload_csv.execute()
+        upload_csv.execute_alt()
