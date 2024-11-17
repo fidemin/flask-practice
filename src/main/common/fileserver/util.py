@@ -25,6 +25,7 @@ class MultipartUploader:
             key=self.filename,
             part_number=self.part_number,
             upload_id=self.upload_id,
+
         )
         logger.info(f"Uploaded part {self.part_number}, size {buffer.tell()} bytes.")
         self.parts.append({"PartNumber": self.part_number, "ETag": response["ETag"]})

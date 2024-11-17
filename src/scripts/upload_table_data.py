@@ -6,5 +6,5 @@ if __name__ == '__main__':
     with app.app_context():
         from src.main.operators.fileserver import UploadCSVFromTableOperator
 
-        upload_csv = UploadCSVFromTableOperator(table_name="very_large_table")
+        upload_csv = UploadCSVFromTableOperator(table_name="very_large_table", chunk_size=20 * 1024 * 1024)
         upload_csv.execute_alt()
