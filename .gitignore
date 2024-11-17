@@ -181,3 +181,6 @@ skaffold.env
 
 # secret
 secret*.yaml
+
+# config file
+*.cfg

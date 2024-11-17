@@ -4,7 +4,7 @@ from flask import request, jsonify, Blueprint
 
 from src.main.model import Employee
 from src.main.service import EmployeeService, DepartmentService
-from src.main.task import copy_employee_task
+from src.main.task import copy_employee_task, upload_csv_from_table_task, create_large_table_task
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,17 @@ def execute_task():
     task_name = data['task_name']
     if task_name == 'copy_employee':
         task = copy_employee_task.apply_async(args=[data['data']['employee_id']])
+    elif task_name == 'upload_csv_from_table':
+        task = upload_csv_from_table_task.apply_async(kwargs=data['data'])
+    elif task_name == 'create_large_table':
+        task = create_large_table_task.apply_async(kwargs=data['data'])
     else:
         return jsonify({"error": "Task not found"}), 404
+    return jsonify({"task_id": task.id})
+
+
+@api_bp.route("/tasks/upload-csv-from-table", methods=['POST'])
+def upload_csv_from_table():
+    data = request.json
+    task = upload_csv_from_table_task.apply_async(kwargs=data)
     return jsonify({"task_id": task.id})

@@ -64,6 +64,11 @@ def create_app():
 
     app = Flask(__name__, static_folder='static')
 
+    file_path = os.getenv('CONFIG_FILE')
+    if file_path is None:
+        raise ValueError('CONFIG_FILE is not set')
+
+    app.config.from_pyfile(os.getenv('CONFIG_FILE'))
     # app.config['SQLALCHEMY_ECHO'] = True
 
     setup_config_for_db(app)
